@@ -195,7 +195,9 @@ module Octokit
       # @return [Sawyer::Resource] A hash representing the comparison
       # @see https://developer.github.com/v3/repos/commits/#compare-two-commits
       def compare(repo, start, endd, options = {})
-        get "#{Repository.path repo}/compare/#{start}...#{endd}", options
+        paginate "#{Repository.path repo}/compare/#{start}...#{endd}", options do |data, last_response|
+          data.commits.concat last_response.data.commits
+        end
       end
 
       # Merge a branch or sha
